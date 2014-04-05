@@ -19,6 +19,7 @@ public class Buffer {
    private int pins = 0;
    private int modifiedBy = -1;  // negative means not modified
    private int logSequenceNumber = -1; // negative means no corresponding log record
+   private long lastAccess = 0; // time in ms when this buffer was last accessed - Johnny
 
    /**
     * Creates a new buffer, wrapping a new 
@@ -35,6 +36,25 @@ public class Buffer {
     * is called first.
     */
    public Buffer() {}
+   
+   
+   /**
+    * Returns the long value of the last access time of the buffer
+    * @return Last access in milliseconds
+    */
+   
+   public long getAccessed() {
+	   return lastAccess;
+   }
+   
+   /**
+    * Sets a new last accessed time for the buffer
+    * @param newAccess Time in milliseconds that will update last access
+    */
+   
+   public void setAccessed(long newAccess) {
+	   lastAccess = newAccess;
+   }
    
    /**
     * Returns the integer value at the specified offset of the

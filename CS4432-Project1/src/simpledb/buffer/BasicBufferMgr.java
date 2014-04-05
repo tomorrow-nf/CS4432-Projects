@@ -61,6 +61,9 @@ class BasicBufferMgr {
       if (!buff.isPinned())
          numAvailable--;
       buff.pin();
+      // Setting the new accessed time of the  buffer
+      long accessed = System.currentTimeMillis();
+      buff.setAccessed(accessed);
       return buff;
    }
    
@@ -80,6 +83,10 @@ class BasicBufferMgr {
       buff.assignToNew(filename, fmtr);
       numAvailable--;
       buff.pin();
+      // Setting the first accessed time of the  buffer
+      // I mean it is new, considering this maybe should be in the buffer constructor
+      long accessed = System.currentTimeMillis();
+      buff.setAccessed(accessed);
       return buff;
    }
    
@@ -110,10 +117,24 @@ class BasicBufferMgr {
       return null;
    }
    
+
    private Buffer chooseUnpinnedBuffer() {
       for (Buffer buff : bufferpool)
          if (!buff.isPinned())
          return buff;
       return null;
+   }
+   
+   // Pretty Naive LRU
+   private Buffer LRUPolicy() {
+	   long leastRecent = Long.MAX_VALUE;
+	   Buffer candidateBuff = null;
+	   for (Buffer buff : bufferpool) {
+		   if (!buff.isPinned() && buff.getAccessed() < leastRecent) {
+			   leastRecent = buff.getAccessed();
+			   candidateBuff = buff;
+		   }
+	   }
+	   return candidateBuff;
    }
 }
