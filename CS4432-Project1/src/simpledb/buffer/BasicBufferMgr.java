@@ -10,6 +10,7 @@ import simpledb.file.*;
 class BasicBufferMgr {
    private Buffer[] bufferpool;
    private int numAvailable;
+   private int clockPosition; // int position into the array the Clock-Replacement algorithm will run along
    
    /**
     * Creates a buffer manager having the specified number 
@@ -27,6 +28,7 @@ class BasicBufferMgr {
    BasicBufferMgr(int numbuffs) {
       bufferpool = new Buffer[numbuffs];
       numAvailable = numbuffs;
+      clockPosition = 0; // Initialize the position in the array that will be looked at first when evicting
       for (int i=0; i<numbuffs; i++)
          bufferpool[i] = new Buffer();
    }
@@ -62,8 +64,10 @@ class BasicBufferMgr {
          numAvailable--;
       buff.pin();
       // Setting the new accessed time of the  buffer
+      // Also setting the second chance ref
       long accessed = System.currentTimeMillis();
       buff.setAccessed(accessed);
+      buff.setRef(true);
       return buff;
    }
    
@@ -87,6 +91,7 @@ class BasicBufferMgr {
       // I mean it is new, considering this maybe should be in the buffer constructor
       long accessed = System.currentTimeMillis();
       buff.setAccessed(accessed);
+      buff.setRef(true);
       return buff;
    }
    
@@ -125,6 +130,9 @@ class BasicBufferMgr {
       return null;
    }
    
+   // Both of these feel pretty inefficient right now...
+   // Also considering moving them into seperate classes when the new buffer pool hits
+   
    // Pretty Naive LRU
    private Buffer LRUPolicy() {
 	   long leastRecent = Long.MAX_VALUE;
@@ -136,5 +144,40 @@ class BasicBufferMgr {
 		   }
 	   }
 	   return candidateBuff;
+   }
+   
+   // Pretty Naive Clock-Replace, though I kinda want to opt in a linked list or something
+   private Buffer ClockPolicy() {
+	   Buffer candidateBuff = bufferpool[clockPosition];
+	   // Is this buffer pinned (being or going to be used)?
+	   // Advance clock position and don't do anything to it
+	   if (candidateBuff.isPinned()) {
+		   moveClockPosition();
+		   return ClockPolicy();
+	   }
+	   // Is this buffer unpinned and hasn't gotten a second chance?
+	   // Change the ref bit to false so it will be dropped next time
+	   else if (!candidateBuff.isPinned() && candidateBuff.getRef()) {
+		   bufferpool[clockPosition].setRef(false);
+		   moveClockPosition();
+		   return ClockPolicy();
+	   }
+	   // This buffer is not pinned and has been given a second chane
+	   // Evict this page
+	   else if (!candidateBuff.isPinned() && !candidateBuff.getRef()) {
+		   moveClockPosition();
+		   return candidateBuff;
+	   }
+	   // If somehow everything fails return null
+	   return null;
+   }
+   
+   private void moveClockPosition() {
+	   if (clockPosition == bufferpool.length - 1) {
+		   clockPosition = 0;
+	   }
+	   else {
+		   clockPosition++;
+	   }
    }
 }

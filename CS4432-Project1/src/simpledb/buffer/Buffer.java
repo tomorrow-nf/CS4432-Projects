@@ -19,7 +19,8 @@ public class Buffer {
    private int pins = 0;
    private int modifiedBy = -1;  // negative means not modified
    private int logSequenceNumber = -1; // negative means no corresponding log record
-   private long lastAccess = 0; // time in ms when this buffer was last accessed - Johnny
+   private long lastAccess = -1; // time in ms when this buffer was last accessed
+   private boolean ref; // second chance boolean
 
    /**
     * Creates a new buffer, wrapping a new 
@@ -54,6 +55,27 @@ public class Buffer {
    
    public void setAccessed(long newAccess) {
 	   lastAccess = newAccess;
+   }
+   
+   /**
+    * Returns the second chance boolean
+    * True - Give this thing another chance
+    * False - Chance was already given
+    */
+   
+   public boolean getRef() {
+	   return ref;
+   }
+   
+   /**
+    * Change the second chance variable
+    * Set to true when a page is accessed or newly created.
+    * Set to false when deciding to evict a page that was previously true.
+    * @param newRef Boolean value for the second chance clock replacement algorithm
+    */
+   
+   public void setRef(boolean newRef) {
+	   ref = newRef;
    }
    
    /**
