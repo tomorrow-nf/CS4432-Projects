@@ -113,16 +113,6 @@ class BasicBufferMgr {
          numAvailable++;
    }
    
-   // CS4432-Project1
-   // Given a block ID, checks whether this ID exists
-   // in the buffer pool
-   synchronized int findPage(Block bID){
-	   if (poolMap.get(bID.hashCode()) == null){
-		   return 0;
-	   }
-	   else return bID.number();
-   }
-   
    /**
     * Returns the number of available (i.e. unpinned) buffers.
     * @return the number of available buffers
@@ -131,13 +121,18 @@ class BasicBufferMgr {
       return numAvailable;
    }
    
+   // CS4432-Project1
+   // Given a block ID, checks whether this ID exists
+   // in the buffer pool
    private Buffer findExistingBuffer(Block blk) {
+	   /*
       for (Buffer buff : bufferpool) {
          Block b = buff.block();
          if (b != null && b.equals(blk))
             return buff;
       }
-      return null;
+      return null;*/
+	  return bufferpool[poolMap.get(blk.hashCode())];
    }
    
 
