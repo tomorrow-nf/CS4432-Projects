@@ -19,7 +19,7 @@ public class CreatePkmnDB {
 			System.out.println("Table MOVES created.");
 
 			s = "insert into MOVES(MoveName, Category, Damage, Accuracy, MoveType) values ";
-			String[] typevals = {"('Recover', 's', 0, 0, 'Normal')",
+			String[] typevals = {"('Recover', 2, 0, 0, 'Normal')",
 								 "('Fly', 0, 90, 95, 'Flying')",
 								 "('Flamethrower', 1, 95, 100, 'Fire')",
 								 "('Surf', 1, 95, 100, 'Water')",
