@@ -37,7 +37,30 @@ public class SimpleDB {
     * @param dirname the name of the database directory
     */
    public static void init(String dirname) {
-      initFileLogAndBufferMgr(dirname);
+      initFileLogAndBufferMgr(dirname, 1);
+      Transaction tx = new Transaction();
+      boolean isnew = fm.isNew();
+      if (isnew)
+         System.out.println("creating new database");
+      else {
+         System.out.println("recovering existing database");
+         tx.recover();
+      }
+      initMetadataMgr(isnew, tx);
+      tx.commit();
+   }
+   
+   /**
+    * --CS4432-PROJECT1--
+    * Initializes the system.
+    * This method is called during system startup.
+    * @param dirname the name of the database directory
+    * @param rpolicy the replacement policy desired during this run of the database
+    * Replacement policy accepts 1: simpleDB Default Replacement, 2: LRU Replacement, 3: Clock Replacement (Any other number will use default)
+    * --CS4432-PROJECT1--
+    */
+   public static void init(String dirname, int rpolicy) {
+      initFileLogAndBufferMgr(dirname, rpolicy);
       Transaction tx = new Transaction();
       boolean isnew = fm.isNew();
       if (isnew)
@@ -74,10 +97,14 @@ public class SimpleDB {
    /**
     * Initializes the file, log, and buffer managers.
     * @param dirname the name of the database directory
+    * --CS4432-PROJECT1--
+    * @param rpolicy Replacement policy being used.
+    * 1 - Default, 2 - LRU Replacement, 3 - Clock Replacement
+    * --CS4432-PROJECT1--
     */
-   public static void initFileLogAndBufferMgr(String dirname) {
+   public static void initFileLogAndBufferMgr(String dirname, int rpolicy) {
       initFileAndLogMgr(dirname);
-      bm = new BufferMgr(BUFFER_SIZE);
+      bm = new BufferMgr(BUFFER_SIZE, rpolicy);
    }
    
    /**

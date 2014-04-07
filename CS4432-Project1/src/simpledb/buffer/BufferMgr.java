@@ -34,9 +34,13 @@ public class BufferMgr {
     * {@link simpledb.server.SimpleDB#initFileAndLogMgr(String)} or
     * is called first.
     * @param numbuffers the number of buffer slots to allocate
+    * --CS4432-PROJECT1--
+    * @param rpolicy Replacement policy being used.
+    * 1 - Default, 2 - LRU Replacement, 3 - Clock Replacement
+    * --CS4432-PROJECT1--
     */
-   public BufferMgr(int numbuffers) {
-      bufferMgr = new BasicBufferMgr(numbuffers);
+   public BufferMgr(int numbuffers, int rpolicy) {
+      bufferMgr = new BasicBufferMgr(numbuffers, rpolicy);
    }
    
    /**

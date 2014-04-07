@@ -11,6 +11,7 @@ class BasicBufferMgr {
    private Buffer[] bufferpool;
    private int numAvailable;
    private int clockPosition; // int position into the array the Clock-Replacement algorithm will run along
+   private int rpolicy; // Stores the selected replacement policy chosen when the db is started
    
    /**
     * Creates a buffer manager having the specified number 
@@ -25,7 +26,8 @@ class BasicBufferMgr {
     * is called first.
     * @param numbuffs the number of buffer slots to allocate
     */
-   BasicBufferMgr(int numbuffs) {
+   BasicBufferMgr(int numbuffs, int rpolicy) {
+	  this.rpolicy = rpolicy;
       bufferpool = new Buffer[numbuffs];
       numAvailable = numbuffs;
       clockPosition = 0; // Initialize the position in the array that will be looked at first when evicting
@@ -124,14 +126,25 @@ class BasicBufferMgr {
    
 
    private Buffer chooseUnpinnedBuffer() {
-      for (Buffer buff : bufferpool)
-         if (!buff.isPinned())
-         return buff;
-      return null;
+	  if (rpolicy == 2) {
+		  System.out.println("Using LRU");
+		  return LRUPolicy();
+	  }
+	  else if (rpolicy == 3) {
+		  System.out.println("Using Clock");
+		  return ClockPolicy();
+	  } 
+	  else {
+		  System.out.println("Using Default");
+			for (Buffer buff : bufferpool)
+				if (!buff.isPinned())
+					return buff;
+			return null;
+	  }
    }
    
    // Both of these feel pretty inefficient right now...
-   // Also considering moving them into seperate classes when the new buffer pool hits
+   // Also considering moving them into separate classes when the new buffer pool hits
    
    // Pretty Naive LRU
    private Buffer LRUPolicy() {
@@ -147,6 +160,7 @@ class BasicBufferMgr {
    }
    
    // Pretty Naive Clock-Replace, though I kinda want to opt in a linked list or something
+   // Also checks for an empty buffer may need to be in order, it works without it but inefficient.
    private Buffer ClockPolicy() {
 	   Buffer candidateBuff = bufferpool[clockPosition];
 	   // Is this buffer pinned (being or going to be used)?
@@ -172,6 +186,7 @@ class BasicBufferMgr {
 	   return null;
    }
    
+   // Helper method to advance metaphorical clock pointer
    private void moveClockPosition() {
 	   if (clockPosition == bufferpool.length - 1) {
 		   clockPosition = 0;
