@@ -123,7 +123,7 @@ class BasicBufferMgr {
    
    // CS4432-Project1
    // Given a block ID, checks whether this ID exists
-   // in the buffer pool
+   // in the buffer pool by checking the key against the hashmap
    private Buffer findExistingBuffer(Block blk) {
 	   /*
       for (Buffer buff : bufferpool) {
@@ -132,7 +132,11 @@ class BasicBufferMgr {
             return buff;
       }
       return null;*/
-	  return bufferpool[poolMap.get(blk.hashCode())];
+	  Integer returnBuff = poolMap.get(blk.hashCode());
+	  if (returnBuff == null){
+		  return null;
+	  }
+	  else return bufferpool[returnBuff];
    }
    
 
