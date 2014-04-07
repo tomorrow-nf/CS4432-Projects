@@ -38,6 +38,11 @@ public class Buffer {
     */
    public Buffer() {}
    
+   // CS4432-Project1
+   // Returns the block ID of the buffer
+   public Block getBlock() {
+	   return blk;
+   }
    
    /**
     * Returns the long value of the last access time of the buffer

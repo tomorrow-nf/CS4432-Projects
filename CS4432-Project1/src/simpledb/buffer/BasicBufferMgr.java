@@ -1,5 +1,7 @@
 package simpledb.buffer;
 
+import java.util.HashMap;
+
 import simpledb.file.*;
 
 /**
@@ -10,6 +12,8 @@ import simpledb.file.*;
 class BasicBufferMgr {
    private Buffer[] bufferpool;
    private int numAvailable;
+   // CS4432-Project1
+   private HashMap<Integer, Integer> poolMap; // hashmap to store info about pages in the buffer pool
    private int clockPosition; // int position into the array the Clock-Replacement algorithm will run along
    private int rpolicy; // Stores the selected replacement policy chosen when the db is started
    
@@ -30,9 +34,11 @@ class BasicBufferMgr {
 	  this.rpolicy = rpolicy;
       bufferpool = new Buffer[numbuffs];
       numAvailable = numbuffs;
-      clockPosition = 0; // Initialize the position in the array that will be looked at first when evicting
-      for (int i=0; i<numbuffs; i++)
+      clockPosition = 0; // CS4432-Project1 - Initialize the position in the array that will be looked at first when evicting
+      for (int i=0; i<numbuffs; i++){
          bufferpool[i] = new Buffer();
+         poolMap.put(bufferpool[i].getBlock().hashCode(), i); // Put the block of the buffer into a hashmap for efficient checking later
+      }
    }
    
    /**
@@ -105,6 +111,16 @@ class BasicBufferMgr {
       buff.unpin();
       if (!buff.isPinned())
          numAvailable++;
+   }
+   
+   // CS4432-Project1
+   // Given a block ID, checks whether this ID exists
+   // in the buffer pool
+   synchronized int findPage(Block bID){
+	   if (poolMap.get(bID.hashCode()) == null){
+		   return 0;
+	   }
+	   else return bID.number();
    }
    
    /**
