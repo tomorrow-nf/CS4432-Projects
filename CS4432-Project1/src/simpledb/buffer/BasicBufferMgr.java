@@ -1,6 +1,8 @@
 package simpledb.buffer;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import simpledb.file.*;
 
@@ -16,7 +18,7 @@ class BasicBufferMgr {
    private HashMap<Integer, Integer> poolMap; // hashmap to store info about pages in the buffer pool
    private int clockPosition; // int position into the array the Clock-Replacement algorithm will run along
    private int rpolicy; // Stores the selected replacement policy chosen when the db is started
-   
+   private List<Integer> emptyFrames; // stores an index of empty frames
    /**
     * Creates a buffer manager having the specified number 
     * of buffer slots.
@@ -35,9 +37,11 @@ class BasicBufferMgr {
       bufferpool = new Buffer[numbuffs];
       numAvailable = numbuffs;
       clockPosition = 0; // CS4432-Project1 - Initialize the position in the array that will be looked at first when evicting
+      emptyFrames = new ArrayList<Integer>(); // CS4432-Project1 - Initialize instance of empty frame index
       for (int i=0; i<numbuffs; i++){
          bufferpool[i] = new Buffer();
          poolMap.put(bufferpool[i].getBlock().hashCode(), i); // Put the block of the buffer into a hashmap for efficient checking later
+         emptyFrames.add(i); // add all frames to index of empty frames
       }
    }
    
@@ -151,6 +155,12 @@ class BasicBufferMgr {
 	  } 
 	  else {
 		  System.out.println("Using Default");
+		  // CS4432-Project1 - efficient finding of empty frames
+		  if (emptyFrames.isEmpty() == false){
+			  Buffer buff = bufferpool[emptyFrames.get(0)]; // get first empty frame in the list
+			  emptyFrames.remove(0); // remove frame from list of empty frames
+			  return buff; 
+		  }
 			for (Buffer buff : bufferpool)
 				if (!buff.isPinned())
 					return buff;
@@ -210,4 +220,5 @@ class BasicBufferMgr {
 		   clockPosition++;
 	   }
    }
+
 }
