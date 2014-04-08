@@ -148,6 +148,7 @@ class BasicBufferMgr {
 		  return null;
 	  }
 	  else {
+		  System.out.println("Found match: " + blk.hashCode());
 		  return bufferpool[returnBuff];
 	  }
    }
@@ -183,8 +184,10 @@ class BasicBufferMgr {
 		  }
 		  // No empty frames, do the default
 			for (Buffer buff : bufferpool)
-				if (!buff.isPinned())
+				if (!buff.isPinned()) {
+					poolMap.remove(buff.getBlock().hashCode());
 					return buff;
+				}
 			return null;
 	  }
    }
