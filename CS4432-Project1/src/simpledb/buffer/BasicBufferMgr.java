@@ -109,7 +109,7 @@ class BasicBufferMgr {
       buff.setAccessed(accessed);
       buff.setRef(true);
       System.out.println("Putting in: " + buff.getBlock().hashCode());
-      // poolMap.put(buff.getBlock().hashCode(), buff.getPosition()); // Put the block of the buffer into a hashmap for efficient checking later
+      poolMap.put(buff.getBlock().hashCode(), buff.getPosition()); // Put the block of the buffer into a hashmap for efficient checking later
       return buff;
    }
    
@@ -148,7 +148,7 @@ class BasicBufferMgr {
 		  return null;
 	  }
 	  else {
-		  System.out.println("Found match: " + blk.hashCode());
+		  System.out.println("FOUND MATCH: " + blk.hashCode());
 		  return bufferpool[returnBuff];
 	  }
    }
@@ -198,14 +198,17 @@ class BasicBufferMgr {
    // Pretty Naive LRU
    private Buffer LRUPolicy() {
 	   long leastRecent = Long.MAX_VALUE;
-	   Buffer candidateBuff = null;
+	   int candidatePosition = 0;
+	   int actualPosition = 0;
 	   for (Buffer buff : bufferpool) {
 		   if (!buff.isPinned() && buff.getAccessed() < leastRecent) {
 			   leastRecent = buff.getAccessed();
-			   candidateBuff = buff;
+			   candidatePosition = actualPosition;
 		   }
+		   actualPosition++;
 	   }
-	   return candidateBuff;
+	   poolMap.remove(bufferpool[candidatePosition].getBlock().hashCode());
+	   return bufferpool[candidatePosition];
    }
    
    // Pretty Naive Clock-Replace, though I kinda want to opt in a linked list or something
@@ -229,6 +232,7 @@ class BasicBufferMgr {
 	   // Evict this page
 	   else if (!candidateBuff.isPinned() && !candidateBuff.getRef()) {
 		   moveClockPosition();
+		   poolMap.remove(candidateBuff.getBlock().hashCode());
 		   return candidateBuff;
 	   }
 	   // If somehow everything fails return null
