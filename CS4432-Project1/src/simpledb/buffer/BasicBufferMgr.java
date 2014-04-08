@@ -147,10 +147,24 @@ class BasicBufferMgr {
    private Buffer chooseUnpinnedBuffer() {
 	  if (rpolicy == 2) {
 		  System.out.println("Using LRU");
+		  // CS4432-Project1 - efficient finding of empty frames
+		  if (emptyFrames.isEmpty() == false){
+			  Buffer buff = bufferpool[emptyFrames.get(0)]; // get first empty frame in the list
+			  emptyFrames.remove(0); // remove frame from list of empty frames
+			  return buff; 
+		  }
+		  // No empty frames, proceed to LRUPolicy
 		  return LRUPolicy();
 	  }
 	  else if (rpolicy == 3) {
 		  System.out.println("Using Clock");
+		  // CS4432-Project1 - efficient finding of empty frames
+		  if (emptyFrames.isEmpty() == false){
+			  Buffer buff = bufferpool[emptyFrames.get(0)]; // get first empty frame in the list
+			  emptyFrames.remove(0); // remove frame from list of empty frames
+			  return buff; 
+		  }
+		  // No empty frames proceed to ClockPolicy
 		  return ClockPolicy();
 	  } 
 	  else {
@@ -161,6 +175,7 @@ class BasicBufferMgr {
 			  emptyFrames.remove(0); // remove frame from list of empty frames
 			  return buff; 
 		  }
+		  // No empty frames, do the default
 			for (Buffer buff : bufferpool)
 				if (!buff.isPinned())
 					return buff;
