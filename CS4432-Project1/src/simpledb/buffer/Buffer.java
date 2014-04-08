@@ -21,8 +21,9 @@ public class Buffer {
    private int logSequenceNumber = -1; // negative means no corresponding log record
    private long lastAccess = -1; // time in ms when this buffer was last accessed
    private boolean ref; // second chance boolean
+   private int position;
 
-   /**
+/**
     * Creates a new buffer, wrapping a new 
     * {@link simpledb.file.Page page}.  
     * This constructor is called exclusively by the 
@@ -43,6 +44,23 @@ public class Buffer {
    public Block getBlock() {
 	   return blk;
    }
+   
+   /** --CS4432-Project1--
+    * Get the position in the buffer array
+    * @return Position in the buffer array
+    */
+   
+   public int getPosition() {
+	   return position;
+   }
+
+   /** --CS4432-Project1--
+    * Set the position in the buffer array
+    * @param position Position in the buffer array
+    */
+   public void setPosition(int position) {
+	   this.position = position;
+	}
    
    /**
     * Returns the long value of the last access time of the buffer

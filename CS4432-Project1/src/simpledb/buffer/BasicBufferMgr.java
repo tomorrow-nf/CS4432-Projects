@@ -36,11 +36,13 @@ class BasicBufferMgr {
 	  this.rpolicy = rpolicy;
       bufferpool = new Buffer[numbuffs];
       numAvailable = numbuffs;
+      poolMap = new HashMap<Integer, Integer>();
       clockPosition = 0; // CS4432-Project1 - Initialize the position in the array that will be looked at first when evicting
       emptyFrames = new ArrayList<Integer>(); // CS4432-Project1 - Initialize instance of empty frame index
       for (int i=0; i<numbuffs; i++){
-         bufferpool[i] = new Buffer();
-         poolMap.put(bufferpool[i].getBlock().hashCode(), i); // Put the block of the buffer into a hashmap for efficient checking later
+    	 Buffer newBuff = new Buffer();
+    	 newBuff.setPosition(i);
+         bufferpool[i] = newBuff;
          emptyFrames.add(i); // add all frames to index of empty frames
       }
    }
@@ -71,6 +73,8 @@ class BasicBufferMgr {
          if (buff == null)
             return null;
          buff.assignToBlock(blk);
+         System.out.println("Putting in: " + buff.getBlock().hashCode());
+         poolMap.put(buff.getBlock().hashCode(), buff.getPosition()); // Put the block of the buffer into a hashmap for efficient checking later
       }
       if (!buff.isPinned())
          numAvailable--;
@@ -104,6 +108,8 @@ class BasicBufferMgr {
       long accessed = System.currentTimeMillis();
       buff.setAccessed(accessed);
       buff.setRef(true);
+      System.out.println("Putting in: " + buff.getBlock().hashCode());
+      // poolMap.put(buff.getBlock().hashCode(), buff.getPosition()); // Put the block of the buffer into a hashmap for efficient checking later
       return buff;
    }
    
@@ -136,17 +142,19 @@ class BasicBufferMgr {
             return buff;
       }
       return null;*/
+	  System.out.println("Searching for: " + blk.hashCode());
 	  Integer returnBuff = poolMap.get(blk.hashCode());
 	  if (returnBuff == null){
 		  return null;
 	  }
-	  else return bufferpool[returnBuff];
+	  else {
+		  return bufferpool[returnBuff];
+	  }
    }
    
 
    private Buffer chooseUnpinnedBuffer() {
 	  if (rpolicy == 2) {
-		  System.out.println("Using LRU");
 		  // CS4432-Project1 - efficient finding of empty frames
 		  if (emptyFrames.isEmpty() == false){
 			  Buffer buff = bufferpool[emptyFrames.get(0)]; // get first empty frame in the list
@@ -157,7 +165,6 @@ class BasicBufferMgr {
 		  return LRUPolicy();
 	  }
 	  else if (rpolicy == 3) {
-		  System.out.println("Using Clock");
 		  // CS4432-Project1 - efficient finding of empty frames
 		  if (emptyFrames.isEmpty() == false){
 			  Buffer buff = bufferpool[emptyFrames.get(0)]; // get first empty frame in the list
@@ -168,7 +175,6 @@ class BasicBufferMgr {
 		  return ClockPolicy();
 	  } 
 	  else {
-		  System.out.println("Using Default");
 		  // CS4432-Project1 - efficient finding of empty frames
 		  if (emptyFrames.isEmpty() == false){
 			  Buffer buff = bufferpool[emptyFrames.get(0)]; // get first empty frame in the list
