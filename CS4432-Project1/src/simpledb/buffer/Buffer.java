@@ -252,4 +252,9 @@ public class Buffer {
       blk = contents.append(filename);
       pins = 0;
    }
+   
+   @Override
+   public String toString() {
+	   return "Buffer ID: " + logSequenceNumber + " " + "BlockInfo: " + blk + " Pins: " + pins + " Last Access: " + lastAccess;
+   }
 }

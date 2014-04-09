@@ -72,8 +72,11 @@ class BasicBufferMgr {
          buff = chooseUnpinnedBuffer();
          if (buff == null)
             return null;
+         System.out.println(blk);
+         System.out.println("AND");
+         System.out.println(this.toString());
+         System.out.println(" ");
          buff.assignToBlock(blk);
-         System.out.println("Putting in: " + buff.getBlock().hashCode());
          poolMap.put(buff.getBlock().hashCode(), buff.getPosition()); // Put the block of the buffer into a hashmap for efficient checking later
       }
       if (!buff.isPinned())
@@ -142,13 +145,13 @@ class BasicBufferMgr {
             return buff;
       }
       return null;*/
-	  System.out.println("Searching for: " + blk.hashCode());
+	  System.out.println("Searching for: " + blk);
 	  Integer returnBuff = poolMap.get(blk.hashCode());
 	  if (returnBuff == null){
 		  return null;
 	  }
 	  else {
-		  System.out.println("FOUND MATCH: " + blk.hashCode());
+		  System.out.println("FOUND MATCH: " + blk);
 		  return bufferpool[returnBuff];
 	  }
    }
@@ -228,7 +231,7 @@ class BasicBufferMgr {
 		   moveClockPosition();
 		   return ClockPolicy();
 	   }
-	   // This buffer is not pinned and has been given a second chane
+	   // This buffer is not pinned and has been given a second chance
 	   // Evict this page
 	   else if (!candidateBuff.isPinned() && !candidateBuff.getRef()) {
 		   moveClockPosition();
@@ -247,6 +250,16 @@ class BasicBufferMgr {
 	   else {
 		   clockPosition++;
 	   }
+   }
+   
+   @Override
+   public String toString() {
+	   StringBuilder bufferDisplay = new StringBuilder();
+	   for (int i=0; i < bufferpool.length; i++) {
+		   bufferDisplay.append(bufferpool[i]);
+		   bufferDisplay.append(" ");
+	   }
+	   return "Buffer Contents: " + bufferDisplay + "| HashMap Contents" + poolMap + "| Empty Frames Contents: " + emptyFrames + "| ClockPosition: " + clockPosition;
    }
 
 }
