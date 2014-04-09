@@ -255,6 +255,6 @@ public class Buffer {
    
    @Override
    public String toString() {
-	   return "Buffer ID: " + logSequenceNumber + " " + "BlockInfo: " + blk + " Pins: " + pins + " Last Access: " + lastAccess;
+	   return "Buffer ID: " + logSequenceNumber + " | BlockInfo: " + blk + " | Pins: " + pins + " | Last Access: " + lastAccess + " | Dirty: " + modifiedBy;
    }
 }
