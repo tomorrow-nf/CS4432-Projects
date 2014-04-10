@@ -2,7 +2,9 @@ We initially attempted JUnit testing, but this proved nearly impossible due to t
 testing was done by running the SQL commands outlined in Examples.sql. As the buffer manager is an integral part of the system, any mistake
 would (and did) lead to errors. 
 
-The vast majority of our testing was performed by adding print statements at various points in the program.
+The vast majority of our testing was performed by adding print statements at various points in the program. SQL commands were then run in the same order 
+as in Examples.sql.
 
 CLOCK POLICY:
-The new toString() method prints out the current clock position.
+The new toString() method prints out the current clock position. If the clock position is updated correctly and the SQL commands return the proper values,
+the clock replacement policy is clearly functional.

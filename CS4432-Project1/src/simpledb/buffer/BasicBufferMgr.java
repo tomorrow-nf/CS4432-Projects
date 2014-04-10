@@ -260,7 +260,7 @@ class BasicBufferMgr {
 		   bufferDisplay.append(bufferpool[i]);
 		   bufferDisplay.append("\n");
 	   }
-	   return "Buffer Contents: " + /*bufferDisplay +*/ "HashMap Contents" + poolMap + "| Empty Frames Contents: " + emptyFrames + "| ClockPosition: " + clockPosition;
+	   return "Buffer Contents: " + bufferDisplay + "HashMap Contents" + poolMap + "| Empty Frames Contents: " + emptyFrames + "| ClockPosition: " + clockPosition;
    }
 
 }
