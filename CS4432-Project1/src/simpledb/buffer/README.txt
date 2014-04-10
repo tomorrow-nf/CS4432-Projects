@@ -10,4 +10,3 @@ Stephen Donohue
 - To run basic SQL queries, run pokemonTest.simbledb.SQLInterpreter or studentClient.simbledb.SQLInterpreter as a Java application
 - Preset SQL queries can be run by running pokemonTest.simpledb.FlyingPkmn or ...NonAtkingMoves as Java applications, as well as
   the default query programs included with simpleDB
-  

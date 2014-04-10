@@ -73,7 +73,6 @@ class BasicBufferMgr {
          if (buff == null)
             return null;
          System.out.println(blk);
-         System.out.println("AND");
          System.out.println(this.toString());
          System.out.println("\n");
          buff.assignToBlock(blk);
@@ -261,7 +260,7 @@ class BasicBufferMgr {
 		   bufferDisplay.append(bufferpool[i]);
 		   bufferDisplay.append("\n");
 	   }
-	   return "Buffer Contents: " + bufferDisplay + "| HashMap Contents" + poolMap + "| Empty Frames Contents: " + emptyFrames + "| ClockPosition: " + clockPosition;
+	   return "Buffer Contents: " + /*bufferDisplay +*/ "HashMap Contents" + poolMap + "| Empty Frames Contents: " + emptyFrames + "| ClockPosition: " + clockPosition;
    }
 
 }

@@ -27,7 +27,6 @@ public class ChangeMajor {
 			catch (SQLException e) {
 				e.printStackTrace();
 			}
-			// butts
 		}
 	}
 }
