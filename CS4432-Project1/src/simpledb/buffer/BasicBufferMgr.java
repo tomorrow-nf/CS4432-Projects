@@ -33,7 +33,7 @@ class BasicBufferMgr {
     * @param numbuffs the number of buffer slots to allocate
     */
    BasicBufferMgr(int numbuffs, int rpolicy) {
-	  this.rpolicy = rpolicy;
+	  this.rpolicy = rpolicy; /** CS4432-Project1 **/ //Dictates what replacement policy to use. 
       bufferpool = new Buffer[numbuffs];
       numAvailable = numbuffs;
       poolMap = new HashMap<Integer, Integer>();
@@ -82,9 +82,10 @@ class BasicBufferMgr {
       if (!buff.isPinned())
          numAvailable--;
       buff.pin();
+      /** CS4432-Project1 **/
       // Setting the new accessed time of the  buffer
       // Also setting the second chance ref
-      long accessed = System.currentTimeMillis();
+      long accessed = System.nanoTime();
       buff.setAccessed(accessed);
       buff.setRef(true);
       return buff;
@@ -108,7 +109,7 @@ class BasicBufferMgr {
       buff.pin();
       // Setting the first accessed time of the  buffer
       // I mean it is new, considering this maybe should be in the buffer constructor
-      long accessed = System.currentTimeMillis();
+      long accessed = System.nanoTime();
       buff.setAccessed(accessed);
       buff.setRef(true);
       System.out.println("Putting in: " + buff.getBlock().hashCode());
@@ -195,10 +196,8 @@ class BasicBufferMgr {
 	  }
    }
    
-   // Both of these feel pretty inefficient right now...
-   // Also considering moving them into separate classes when the new buffer pool hits
-   
-   // Pretty Naive LRU
+   /** CS4432-Project1 **/
+   // LRU Policy
    private Buffer LRUPolicy() {
 	   long leastRecent = Long.MAX_VALUE;
 	   int candidatePosition = 0;
@@ -214,8 +213,9 @@ class BasicBufferMgr {
 	   return bufferpool[candidatePosition];
    }
    
-   // Pretty Naive Clock-Replace, though I kinda want to opt in a linked list or something
-   // Also checks for an empty buffer may need to be in order, it works without it but inefficient.
+   /** CS4432-Project1 **/
+   // Assumption: If the buffer is empty, ClockPolicy isn't called and the clock pointer
+   // Will not move until actual eviction is needed, will start at 0th position until then.
    private Buffer ClockPolicy() {
 	   Buffer candidateBuff = bufferpool[clockPosition];
 	   // Is this buffer pinned (being or going to be used)?
@@ -242,6 +242,7 @@ class BasicBufferMgr {
 	   return null;
    }
    
+   /** CS4432-Project1 **/
    // Helper method to advance metaphorical clock pointer
    private void moveClockPosition() {
 	   if (clockPosition == bufferpool.length - 1) {
@@ -252,6 +253,7 @@ class BasicBufferMgr {
 	   }
    }
    
+   /** CS4432-Project1 **/
    @Override
    public String toString() {
 	   StringBuilder bufferDisplay = new StringBuilder();

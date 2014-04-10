@@ -19,9 +19,9 @@ public class Buffer {
    private int pins = 0;
    private int modifiedBy = -1;  // negative means not modified
    private int logSequenceNumber = -1; // negative means no corresponding log record
-   private long lastAccess = -1; // time in ms when this buffer was last accessed
-   private boolean ref; // second chance boolean
-   private int position;
+   private long lastAccess = -1; /** CS4432-Project1 **/ // time in ns when this buffer was last accessed
+   private boolean ref; /** CS4432-Project1 **/ // second chance boolean
+   private int position; /** CS4432-Project1 **/ // Position in the buffer pool
 
 /**
     * Creates a new buffer, wrapping a new 
@@ -62,7 +62,7 @@ public class Buffer {
 	   this.position = position;
 	}
    
-   /**
+   /** --CS4432-Project1--
     * Returns the long value of the last access time of the buffer
     * @return Last access in milliseconds
     */
@@ -71,7 +71,7 @@ public class Buffer {
 	   return lastAccess;
    }
    
-   /**
+   /** --CS4432-Project1--
     * Sets a new last accessed time for the buffer
     * @param newAccess Time in milliseconds that will update last access
     */
@@ -80,7 +80,7 @@ public class Buffer {
 	   lastAccess = newAccess;
    }
    
-   /**
+   /** --CS4432-Project1--
     * Returns the second chance boolean
     * True - Give this thing another chance
     * False - Chance was already given
@@ -90,7 +90,7 @@ public class Buffer {
 	   return ref;
    }
    
-   /**
+   /** --CS4432-Project1--
     * Change the second chance variable
     * Set to true when a page is accessed or newly created.
     * Set to false when deciding to evict a page that was previously true.
