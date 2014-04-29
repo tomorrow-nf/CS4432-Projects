@@ -7,7 +7,7 @@ import java.util.*;
 
 /**
  * The index manager.
- * The index manager has similar functionalty to the table manager.
+ * The index manager has similar functionality to the table manager.
  * @author Edward Sciore
  */
 public class IndexMgr {
@@ -26,6 +26,7 @@ public class IndexMgr {
          sch.addStringField("indexname", MAX_NAME);
          sch.addStringField("tablename", MAX_NAME);
          sch.addStringField("fieldname", MAX_NAME);
+         sch.addStringField("indextype", MAX_NAME);
          tblmgr.createTable("idxcat", sch, tx);
       }
       ti = tblmgr.getTableInfo("idxcat", tx);
@@ -43,10 +44,10 @@ public class IndexMgr {
    public void createIndex(String indextype, String idxname, String tblname, String fldname, Transaction tx) {
       RecordFile rf = new RecordFile(ti, tx);
       rf.insert();
-      rf.setString("indextype", indextype);
       rf.setString("indexname", idxname);
       rf.setString("tablename", tblname);
       rf.setString("fieldname", fldname);
+      rf.setString("indextype", indextype);
       rf.close();
    }
    
@@ -64,7 +65,8 @@ public class IndexMgr {
          if (rf.getString("tablename").equals(tblname)) {
          String idxname = rf.getString("indexname");
          String fldname = rf.getString("fieldname");
-         IndexInfo ii = new IndexInfo(idxname, tblname, fldname, tx);
+         String indextype = rf.getString("indextype");
+         IndexInfo ii = new IndexInfo(indextype, idxname, tblname, fldname, tx);
          result.put(fldname, ii);
       }
       rf.close();
