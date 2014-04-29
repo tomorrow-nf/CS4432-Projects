@@ -231,12 +231,6 @@ public class Parser {
    
 //  Method for parsing create index commands
    
-   /* create [IndexType] index [IndexName] on [TableName]
-   (
-		   [FieldName]
-		   )
-		   ”
-		   */
    public CreateIndexData createIndex() {
 	  String indextype = lex.eatId();
       lex.eatKeyword("index");
