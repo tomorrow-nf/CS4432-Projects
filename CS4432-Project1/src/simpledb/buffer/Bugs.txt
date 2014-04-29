@@ -1,2 +1,0 @@
-We are not aware of any bugs in this program. However, we should note that while numeric pinning and dirty frame bits were requested 
-in the assignment, they have already been implemented adequately in simpleDB exactly as requested. No changes were made for these features.
