@@ -13,7 +13,7 @@ import java.util.Map;
  * This class contains methods for planning a single table.
  * @author Edward Sciore
  */
-class TablePlanner {
+public class TablePlanner {
    private TablePlan myplan;
    private Predicate mypred;
    private Schema myschema;
