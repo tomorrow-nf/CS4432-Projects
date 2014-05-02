@@ -1,7 +1,5 @@
-package simpledb.index.exhash;
+package simpledb.index.btree;
 
-
-import java.util.HashMap;
 import simpledb.tx.Transaction;
 import simpledb.record.*;
 import simpledb.query.*;
@@ -13,17 +11,13 @@ import simpledb.index.Index;
  * and each bucket is implemented as a file of index records.
  * @author Edward Sciore
  */
-public class ExHashIndex implements Index {
+public class HashIndex implements Index {
 	public static int NUM_BUCKETS = 100;
 	private String idxname;
 	private Schema sch;
 	private Transaction tx;
 	private Constant searchkey = null;
 	private TableScan ts = null;
-	
-	private int globalDepth = 2; // Start globalDepth at 2...
-	private int bitMask = 3; //... and start bitMask at 3 appropriately
-	private HashMap<Integer, Bucket> buckets;
 
 	/**
 	 * Opens a hash index for the specified index.
@@ -31,17 +25,10 @@ public class ExHashIndex implements Index {
 	 * @param sch the schema of the index records
 	 * @param tx the calling transaction
 	 */
-	public ExHashIndex(String idxname, Schema sch, Transaction tx) {
+	public HashIndex(String idxname, Schema sch, Transaction tx) {
 		this.idxname = idxname;
 		this.sch = sch;
 		this.tx = tx;
-		
-		buckets = new HashMap<Integer, Bucket>();
-		// Initialize 4 buckets
-		Bucket bA = new Bucket(0, 2); buckets.put(0, bA);
-		Bucket bB = new Bucket(1, 2); buckets.put(1, bB);
-		Bucket bC = new Bucket(2, 2); buckets.put(2, bC);
-		Bucket bD = new Bucket(3, 2); buckets.put(3, bD);
 	}
 
 	/**
@@ -56,54 +43,12 @@ public class ExHashIndex implements Index {
 	public void beforeFirst(Constant searchkey) {
 		close();
 		this.searchkey = searchkey;
-		int bucket = searchkey.hashCode() & bitMask; // Calculate the bucket it needs to go to
-		// Check if the bucket is full. If not, add to the bucket. If it is, split the bucket.
-		if (buckets.get(bucket).getTotal() == 4){
-			// Increment depths
-			globalDepth++;
-			buckets.get(bucket).incLocalDepth();
-			// Update the buckets
-			bitMask = (bitMask << 1) + 1; // Update the bit mask to account for increased depth
-			int newBucket = searchkey.hashCode(); // Add a new bucket
-			updateBuckets(buckets.get(bucket), newBucket); // Update the contents of the old and newly expanded bucket
-		}
-		else {
-			buckets.get(bucket).addToContents(searchkey.hashCode()); // "Add" a value to the bucket
-			String tblname = idxname + bucket;
-			TableInfo ti = new TableInfo(tblname, sch);
-			ts = new TableScan(ti, tx);
-		}
+		int bucket = searchkey.hashCode() % NUM_BUCKETS;
+		String tblname = idxname + bucket;
+		TableInfo ti = new TableInfo(tblname, sch);
+		ts = new TableScan(ti, tx);
 	}
-	
-	/**
-	 * Updates the contents of each bucket when a new bucket is added
-	 */
-	public void updateBuckets(Bucket bucket, int newBucketID){
-		int i, newHash;
-		int newBucketHashed = newBucketID & bitMask;
-		// Create the new bucket. Updated values and the new value will go into
-		// either the old bucket or this new bucket. We do not need to explicitly
-		// tell anything to go into this new bucket, just check the masked hashes
-		Bucket newBucket = new Bucket(buckets.size() + 1, globalDepth);
-		
-		// Increment through the contents of the old bucket, reapplying the hash
-		for (i = 0; i < bucket.getTotal(); i++){
-			newHash = bucket.getContents().get(i) & bitMask; // Apply the new bitmask
-			bucket.getContents().remove(i); // Remove this value from the contents
-			
-			// Add the value to its appropriate bucket
-			buckets.get(newHash).addToContents(bucket.getContents().get(i)); 
-			String tblname = idxname + newHash;
-			TableInfo ti = new TableInfo(tblname, sch);
-			ts = new TableScan(ti, tx);
-		}
-		// Add the new value to its appropriate bucket
-		buckets.get(newBucketHashed).addToContents(newBucketHashed); 
-		String tblname2 = idxname + newBucketHashed;
-		TableInfo ti2 = new TableInfo(tblname2, sch);
-		ts = new TableScan(ti2, tx);
-	}
-	
+
 	/**
 	 * Moves to the next record having the search key.
 	 * The method loops through the table scan for the bucket,
@@ -177,7 +122,6 @@ public class ExHashIndex implements Index {
 	 * @return the cost of traversing the index
 	 */
 	public static int searchCost(int numblocks, int rpb){
-		return numblocks / ExHashIndex.NUM_BUCKETS;
+		return numblocks / HashIndex.NUM_BUCKETS;
 	}
 }
-

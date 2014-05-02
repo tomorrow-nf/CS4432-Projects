@@ -53,7 +53,7 @@ public class IndexInfo {
     	  System.out.println("Creating Extensible Hash Index On");
     	  return new ExHashIndex(idxname, sch, tx);
       }
-      // Create btree index
+      // Create b-tree index
       else if (indextype.equals("bt")){
     	  System.out.println("Creating B-Tree Index On");
     	  return new BTreeIndex(idxname, sch, tx);

@@ -72,9 +72,9 @@ class BasicBufferMgr {
          buff = chooseUnpinnedBuffer();
          if (buff == null)
             return null;
-         System.out.println(blk);
-         System.out.println(this.toString());
-         System.out.println("\n");
+         //System.out.println(blk);
+         //System.out.println(this.toString());
+         //System.out.println("\n");
          buff.assignToBlock(blk);
          poolMap.put(buff.getBlock().hashCode(), buff.getPosition()); // Put the block of the buffer into a hashmap for efficient checking later
       }
@@ -111,7 +111,7 @@ class BasicBufferMgr {
       long accessed = System.nanoTime();
       buff.setAccessed(accessed);
       buff.setRef(true);
-      System.out.println("Putting in: " + buff.getBlock().hashCode());
+      //System.out.println("Putting in: " + buff.getBlock().hashCode());
       poolMap.put(buff.getBlock().hashCode(), buff.getPosition()); // Put the block of the buffer into a hashmap for efficient checking later
       return buff;
    }
@@ -145,13 +145,13 @@ class BasicBufferMgr {
             return buff;
       }
       return null;*/
-	  System.out.println("Searching for: " + blk);
+	  //System.out.println("Searching for: " + blk);
 	  Integer returnBuff = poolMap.get(blk.hashCode());
 	  if (returnBuff == null){
 		  return null;
 	  }
 	  else {
-		  System.out.println("FOUND MATCH: " + blk);
+		  //System.out.println("FOUND MATCH: " + blk);
 		  return bufferpool[returnBuff];
 	  }
    }
@@ -255,12 +255,13 @@ class BasicBufferMgr {
    /** CS4432-Project1 **/
    @Override
    public String toString() {
-	   StringBuilder bufferDisplay = new StringBuilder();
+	   /*StringBuilder bufferDisplay = new StringBuilder();
 	   for (int i=0; i < bufferpool.length; i++) {
 		   bufferDisplay.append(bufferpool[i]);
 		   bufferDisplay.append("\n");
 	   }
 	   return "Buffer Contents: " + bufferDisplay + "HashMap Contents" + poolMap + "| Empty Frames Contents: " + emptyFrames + "| ClockPosition: " + clockPosition;
-   }
-
+   }*/
+	   return "";
+	   }
 }

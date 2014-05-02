@@ -49,11 +49,11 @@ public class Bucket {
 		this.total = total;
 	}
 
-	public ArrayList<Integer>[] getContents() {
+	public ArrayList<Integer> getContents() {
 		return contents;
 	}
 
-	public void setContents(ArrayList<Integer>[] contents) {
+	public void setContents(ArrayList<Integer> contents) {
 		this.contents = contents;
 	}
 }
