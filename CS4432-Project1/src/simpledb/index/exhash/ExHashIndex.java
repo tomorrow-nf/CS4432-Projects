@@ -22,7 +22,6 @@ public class ExHashIndex implements Index {
 	private TableScan ts = null;
 	
 	private int globalDepth = 2; // Start globalDepth at 2...
-	private int bitMask = 3; //... and start bitMask at 3 appropriately
 	private HashMap<Integer, Bucket> buckets;
 
 	/**
@@ -56,16 +55,23 @@ public class ExHashIndex implements Index {
 	public void beforeFirst(Constant searchkey) {
 		close();
 		this.searchkey = searchkey;
+		int bitMask = genBitmask(globalDepth); // Create a bitmask, using the global depth by default
 		int bucket = searchkey.hashCode() & bitMask; // Calculate the bucket it needs to go to
+		
+		// Compare depths and update the bitmask if need be
+		if (buckets.get(bucket).getLocalDepth() < globalDepth){
+			bitMask = genBitmask(buckets.get(bucket).getLocalDepth()); // Update the bit mask to account for increased depth
+			bucket = searchkey.hashCode() & bitMask; // If the bitmask had to change, update the bucket
+		}
+		
 		// Check if the bucket is full. If not, add to the bucket. If it is, split the bucket.
 		if (buckets.get(bucket).getTotal() == 4){
 			// Increment depths
 			globalDepth++;
 			buckets.get(bucket).incLocalDepth();
 			// Update the buckets
-			bitMask = (bitMask << 1) + 1; // Update the bit mask to account for increased depth
 			int newBucket = searchkey.hashCode(); // Add a new bucket
-			updateBuckets(buckets.get(bucket), newBucket); // Update the contents of the old and newly expanded bucket
+			updateBuckets(buckets.get(bucket), newBucket, bitMask); // Update the contents of the old and newly expanded bucket
 		}
 		else {
 			buckets.get(bucket).addToContents(searchkey.hashCode()); // "Add" a value to the bucket
@@ -76,15 +82,33 @@ public class ExHashIndex implements Index {
 	}
 	
 	/**
+	 * Generate a bitmask given a local depth
+	 * @param depth
+	 * @return bitmask to use
+	 */
+	public int genBitmask(int depth){
+		int i;
+		int bitMask = 0;
+		// Shift the value over and add 1.
+		// When completed, bitMask will consist of a total
+		// of "depth" 1 bits (ex. 5 => 11111, 2 => 11)
+		for (i = 0; i < depth; i++){
+			bitMask = (bitMask << 1) + 1;
+		}
+		return bitMask;
+	}
+	
+	/**
 	 * Updates the contents of each bucket when a new bucket is added
 	 */
-	public void updateBuckets(Bucket bucket, int newBucketID){
+	public void updateBuckets(Bucket bucket, int newBucketID, int bitMask){
 		int i, newHash;
 		int newBucketHashed = newBucketID & bitMask;
 		// Create the new bucket. Updated values and the new value will go into
 		// either the old bucket or this new bucket. We do not need to explicitly
 		// tell anything to go into this new bucket, just check the masked hashes
 		Bucket newBucket = new Bucket(buckets.size() + 1, globalDepth);
+		buckets.put(newBucketHashed, newBucket);
 		
 		// Increment through the contents of the old bucket, reapplying the hash
 		for (i = 0; i < bucket.getTotal(); i++){
