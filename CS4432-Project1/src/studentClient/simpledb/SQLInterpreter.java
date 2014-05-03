@@ -80,8 +80,8 @@ public class SQLInterpreter {
 			rs.close();
 			
 			long endTime = System.currentTimeMillis();
-			long elapsedTime = startTime - endTime;
-			System.out.println("QUERY TIME: " + elapsedTime);
+			long elapsedTime = endTime - startTime;
+			System.out.println("QUERY TIME: " + elapsedTime + "ms");
 		}
 		catch (SQLException e) {
 			System.out.println("SQL Exception: " + e.getMessage());
