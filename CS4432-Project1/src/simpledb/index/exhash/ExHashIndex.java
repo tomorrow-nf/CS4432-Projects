@@ -14,7 +14,7 @@ import simpledb.index.Index;
  * @author Edward Sciore
  */
 public class ExHashIndex implements Index {
-	public static int NUM_BUCKETS = 100;
+	public static int NUM_BUCKETS = 4;
 	private String idxname;
 	private Schema sch;
 	private Transaction tx;
@@ -109,6 +109,7 @@ public class ExHashIndex implements Index {
 		// tell anything to go into this new bucket, just check the masked hashes
 		Bucket newBucket = new Bucket(buckets.size() + 1, globalDepth);
 		buckets.put(newBucketHashed, newBucket);
+		NUM_BUCKETS++;
 		
 		// Increment through the contents of the old bucket, reapplying the hash
 		for (i = 0; i < bucket.getTotal(); i++){
