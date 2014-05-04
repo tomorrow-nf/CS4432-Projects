@@ -65,39 +65,56 @@ public class SelectScan implements UpdateScan {
    }
    
    // UpdateScan methods
+   // Also where the boolean flags for TableInfo's
+   // Sorted status will be set to false
    
    public void setVal(String fldname, Constant val) {
       UpdateScan us = (UpdateScan) s;
+      us.tableUnsorted();
       us.setVal(fldname, val);
    }
    
    public void setInt(String fldname, int val) {
       UpdateScan us = (UpdateScan) s;
+      us.tableUnsorted();
       us.setInt(fldname, val);
    }
    
    public void setString(String fldname, String val) {
       UpdateScan us = (UpdateScan) s;
+      us.tableUnsorted();
       us.setString(fldname, val);
    }
    
    public void delete() {
       UpdateScan us = (UpdateScan) s;
+      us.tableUnsorted();
       us.delete();
    }
    
    public void insert() {
       UpdateScan us = (UpdateScan) s;
+      us.tableUnsorted();
       us.insert();
    }
    
    public RID getRid() {
       UpdateScan us = (UpdateScan) s;
+      us.tableUnsorted();
       return us.getRid();
    }
    
    public void moveToRid(RID rid) {
       UpdateScan us = (UpdateScan) s;
+      us.tableUnsorted();
       us.moveToRid(rid);
    }
+   
+   // This one does not necessarily need to do anything
+   // The methods above seem to be more relevant
+   // Also theres no way of getting relevant TableInfo to update
+   	@Override
+	public void tableUnsorted() {
+	// TODO Auto-generated method stub
+	}
 }

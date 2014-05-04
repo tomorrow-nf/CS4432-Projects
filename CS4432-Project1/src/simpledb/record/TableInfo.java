@@ -13,6 +13,8 @@ public class TableInfo {
    private Map<String,Integer> offsets;
    private int recordlen;
    private String tblname;
+   // Boolean to store whether a table has been sorted or not
+   private boolean isSorted;
    
    /**
     * Creates a TableInfo object, given a table name
@@ -23,6 +25,9 @@ public class TableInfo {
     * @param schema the schema of the table's records
     */
    public TableInfo(String tblname, Schema schema) {
+	  // Set the flag to false in the beginning
+	  // SortScan class should set this to true once it has been sorted
+	  isSorted = false;
       this.schema = schema;
       this.tblname = tblname;
       offsets  = new HashMap<String,Integer>();
@@ -45,6 +50,10 @@ public class TableInfo {
     * @param recordlen the already-calculated length of each record
     */
    public TableInfo(String tblname, Schema schema, Map<String,Integer> offsets, int recordlen) {
+	  // Set the flag to false in the beginning
+	  // SortScan class should set this to true once it has been sorted
+	  // Not too sure about this one as its from metadata not table creation
+	  isSorted = false;
       this.tblname   = tblname;
       this.schema    = schema;
       this.offsets   = offsets;
@@ -93,5 +102,14 @@ public class TableInfo {
          return INT_SIZE;
       else
          return STR_SIZE(schema.length(fldname));
+   }
+   
+   /**
+    * Sets the sorted flag to signify what whether
+    * This table has been sorted or not
+    * @param newFlag
+    */
+   public void setSorted(boolean newFlag) {
+	   isSorted = newFlag;
    }
 }

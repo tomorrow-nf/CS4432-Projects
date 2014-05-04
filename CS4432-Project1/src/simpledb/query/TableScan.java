@@ -106,4 +106,10 @@ public class TableScan implements UpdateScan {
    public void moveToRid(RID rid) {
       rf.moveToRid(rid);
    }
+   
+   // Set the flag to false as an update has occurred
+   @Override
+   public void tableUnsorted() {
+	   rf.getTi().setSorted(false);
+   }
 }

@@ -50,4 +50,10 @@ public interface UpdateScan extends Scan {
     * @param rid the RID of the desired record
     */
    public void moveToRid(RID rid);
+   
+   /**
+    * Sets the updated table as unsorted due to an update
+    * In the tables tuples
+    */
+   public void tableUnsorted();
 }

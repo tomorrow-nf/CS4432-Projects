@@ -161,4 +161,9 @@ public class RecordFile {
       RecordFormatter fmtr = new RecordFormatter(ti);
       tx.append(filename, fmtr);
    }
+   
+   // Need a getter to set the thing bro
+   public TableInfo getTi() {
+	return ti;
+}
 }
