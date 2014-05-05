@@ -112,4 +112,9 @@ public class TableInfo {
    public void setSorted(boolean newFlag) {
 	   isSorted = newFlag;
    }
+   
+   public boolean isSorted() {
+	   return isSorted;
+   }
+   }
 }
