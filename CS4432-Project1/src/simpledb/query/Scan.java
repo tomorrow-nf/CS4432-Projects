@@ -1,5 +1,7 @@
 package simpledb.query;
 
+import simpledb.record.RecordFile;
+
 /**
  * The interface will be implemented by each query scan.
  * There is a Scan class for each relational
@@ -54,4 +56,6 @@ public interface Scan {
     * @return true if the scan has that field
     */
    public boolean  hasField(String fldname);
+   
+   public RecordFile getRecordFile();
 }

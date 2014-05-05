@@ -1,6 +1,7 @@
 package simpledb.index.query;
 
 import simpledb.record.RID;
+import simpledb.record.RecordFile;
 import simpledb.query.*;
 import simpledb.index.Index;
 
@@ -95,4 +96,10 @@ public class IndexSelectScan implements Scan {
    public boolean hasField(String fldname) {
       return ts.hasField(fldname);
    }
+
+@Override
+public RecordFile getRecordFile() {
+	// TODO Auto-generated method stub
+	return null;
+}
 }

@@ -41,7 +41,7 @@ public class SortPlan implements Plan {
       src.close();
       while (runs.size() > 2)
          runs = doAMergeIteration(runs);
-      return new SortScan(runs, comp);
+      return new SortScan(runs, comp, src.getRecordFile());
    }
    
    /**

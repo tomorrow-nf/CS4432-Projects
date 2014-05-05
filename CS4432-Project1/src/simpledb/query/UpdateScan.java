@@ -1,6 +1,7 @@
 package simpledb.query;
 
 import simpledb.record.RID;
+import simpledb.record.RecordFile;
 
 /**
  * The interface implemented by all updateable scans.
@@ -56,4 +57,6 @@ public interface UpdateScan extends Scan {
     * In the tables tuples
     */
    public void tableUnsorted();
+   
+   public RecordFile getRf();
 }

@@ -1,5 +1,7 @@
 package simpledb.query;
 
+import simpledb.record.RecordFile;
+
 /**
  * The scan class corresponding to the <i>product</i> relational
  * algebra operator.
@@ -104,5 +106,10 @@ public class ProductScan implements Scan {
     */
    public boolean hasField(String fldname) {
       return s1.hasField(fldname) || s2.hasField(fldname);
+   }
+   
+   public RecordFile getRecordFile() {
+	   // This technically doesnt work
+	   return s1.getRecordFile();
    }
 }
