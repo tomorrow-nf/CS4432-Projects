@@ -116,5 +116,4 @@ public class TableInfo {
    public boolean isSorted() {
 	   return isSorted;
    }
-   }
 }

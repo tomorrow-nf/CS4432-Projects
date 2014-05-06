@@ -50,17 +50,17 @@ public class IndexInfo {
       Schema sch = schema();
       // Create extensible hash index
       if (indextype.equals("eh")){
-    	  System.out.println("Creating Extensible Hash Index On");
+    	  System.out.println("Creating Extensible Hash Index");
     	  return new ExHashIndex(idxname, sch, tx);
       }
       // Create b-tree index
       else if (indextype.equals("bt")){
-    	  System.out.println("Creating B-Tree Index On");
+    	  System.out.println("Creating B-Tree Index");
     	  return new BTreeIndex(idxname, sch, tx);
       }
       // Create new HashIndex for hash indexing (default)
       else {
-    	  System.out.println("Creating Simple Hash Index On");
+    	  System.out.println("Creating Simple Hash Index");
     	  return new HashIndex(idxname, sch, tx);
       }
    }

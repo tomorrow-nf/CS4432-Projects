@@ -6,7 +6,7 @@ import java.sql.Statement;
 import java.util.Random;
 import simpledb.remote.SimpleDriver;
 public class CreateTestTables {
- final static int maxSize=5000;
+ final static int maxSize=10;
  /**
   * @param args
   */
@@ -47,8 +47,11 @@ public class CreateTestTables {
    ")");
 
    s.executeUpdate("create sh index idx1 on test1 (a1)");
-   s.executeUpdate("create ex index idx2 on test2 (a1)");
+   System.out.println("Static hash index created");
+   s.executeUpdate("create eh index idx2 on test2 (a1)");
+   System.out.println("Ex Hash index created");
    s.executeUpdate("create bt index idx3 on test3 (a1)");
+   System.out.println("B-Tree index created");
    for(int i=1;i<6;i++)
    {
     if(i!=5)
