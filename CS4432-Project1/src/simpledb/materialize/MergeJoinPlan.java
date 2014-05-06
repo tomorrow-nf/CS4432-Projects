@@ -27,11 +27,23 @@ public class MergeJoinPlan implements Plan {
    public MergeJoinPlan(Plan p1, Plan p2, String fldname1, String fldname2, Transaction tx) {
       this.fldname1 = fldname1;
       List<String> sortlist1 = Arrays.asList(fldname1);
-      this.p1 = new SortPlan(p1, sortlist1, tx);
+      // Make the check to see if this table is already sorted
+      if (!(p1.open().getRecordFile().getTi().isSorted())) {
+    	  this.p1 = new SortPlan(p1, sortlist1, tx);
+      }
+      else {
+    	  this.p1 = p1;
+      }
       
       this.fldname2 = fldname2;
       List<String> sortlist2 = Arrays.asList(fldname2);
-      this.p2 = new SortPlan(p2, sortlist2, tx);
+      // Make the same check here
+      if (!(p2.open().getRecordFile().getTi().isSorted())) {
+    	  this.p2 = new SortPlan(p2, sortlist2, tx);
+      }
+      else {
+    	  this.p2 = p2;
+      }
       
       sch.addAll(p1.schema());
       sch.addAll(p2.schema());

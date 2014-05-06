@@ -121,4 +121,12 @@ public class SelectScan implements UpdateScan {
 	public void tableUnsorted() {
 	// TODO Auto-generated method stub
 	}
+   	
+   	public RecordFile getRf() {
+   		return s.getRecordFile();
+   	}
+   	
+   	public RecordFile getRecordFile() {
+   		return s.getRecordFile();
+   	}
 }

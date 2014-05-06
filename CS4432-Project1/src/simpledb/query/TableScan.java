@@ -112,4 +112,17 @@ public class TableScan implements UpdateScan {
    public void tableUnsorted() {
 	   rf.getTi().setSorted(false);
    }
+   
+   public RecordFile getRf() {
+	   return rf;
+   }
+
+   public void setRf(RecordFile rf) {
+	   this.rf = rf;
+	}
+
+   @Override
+	public RecordFile getRecordFile() {
+		return rf;
+	}
 }

@@ -1,6 +1,7 @@
 package simpledb.index.query;
 
 import simpledb.query.*;
+import simpledb.record.RecordFile;
 import simpledb.index.Index;
 
 /**
@@ -119,4 +120,10 @@ public class IndexJoinScan implements Scan {
       Constant searchkey = s.getVal(joinfield);
       idx.beforeFirst(searchkey);
    }
+
+@Override
+public RecordFile getRecordFile() {
+	// TODO Auto-generated method stub
+	return null;
+}
 }

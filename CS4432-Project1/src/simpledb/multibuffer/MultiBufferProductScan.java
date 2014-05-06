@@ -1,6 +1,7 @@
 package simpledb.multibuffer;
 
 import simpledb.tx.Transaction;
+import simpledb.record.RecordFile;
 import simpledb.record.TableInfo;
 import simpledb.query.*;
 
@@ -118,5 +119,11 @@ public class MultiBufferProductScan implements Scan {
       nextblknum = end + 1;
       return true;
    }
+
+@Override
+public RecordFile getRecordFile() {
+	// TODO Auto-generated method stub
+	return null;
+}
 }
 

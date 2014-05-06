@@ -1,7 +1,10 @@
 package simpledb.materialize;
 
 import simpledb.record.RID;
+import simpledb.record.RecordFile;
+import simpledb.record.TableInfo;
 import simpledb.query.*;
+
 import java.util.*;
 
 /**
@@ -17,6 +20,7 @@ public class SortScan implements Scan {
    private RecordComparator comp;
    private boolean hasmore1, hasmore2=false;
    private List<RID> savedposition;
+   private RecordFile origRecord;
    
    /**
     * Creates a sort scan, given a list of 1 or 2 runs.
@@ -25,7 +29,8 @@ public class SortScan implements Scan {
     * @param runs the list of runs
     * @param comp the record comparator
     */
-   public SortScan(List<TempTable> runs, RecordComparator comp) {
+   public SortScan(List<TempTable> runs, RecordComparator comp, RecordFile origRecord) {
+	  this.origRecord = origRecord;
       this.comp = comp;
       s1 = (UpdateScan) runs.get(0).open();
       hasmore1 = s1.next();
@@ -33,6 +38,10 @@ public class SortScan implements Scan {
          s2 = (UpdateScan) runs.get(1).open();
          hasmore2 = s2.next();
       }
+      // Replace the Original Record file with the temp tables RecordFile
+      origRecord.replaceMeWith(s1.getRecordFile());
+      // Set sorted to true
+      origRecord.getTi().setSorted(true);
    }
    
    /**
@@ -70,10 +79,12 @@ public class SortScan implements Scan {
       if (!hasmore1 && !hasmore2)
          return false;
       else if (hasmore1 && hasmore2) {
-         if (comp.compare(s1, s2) < 0)
+         if (comp.compare(s1, s2) < 0) {
             currentscan = s1;
-         else
+         }
+         else {
             currentscan = s2;
+         }
       }
       else if (hasmore1)
          currentscan = s1;
@@ -147,4 +158,10 @@ public class SortScan implements Scan {
       if (rid2 != null)
          s2.moveToRid(rid2);
    }
+
+@Override
+public RecordFile getRecordFile() {
+	// TODO Auto-generated method stub
+	return null;
+}
 }

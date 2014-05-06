@@ -1,6 +1,7 @@
 package simpledb.materialize;
 
 import simpledb.query.*;
+import simpledb.record.RecordFile;
 
 /**
  * The Scan class for the <i>mergejoin</i> operator.
@@ -134,5 +135,11 @@ public class MergeJoinScan implements Scan {
    public boolean hasField(String fldname) {
       return s1.hasField(fldname) || s2.hasField(fldname);
    }
+
+@Override
+public RecordFile getRecordFile() {
+	// TODO Auto-generated method stub
+	return null;
+}
 }
 

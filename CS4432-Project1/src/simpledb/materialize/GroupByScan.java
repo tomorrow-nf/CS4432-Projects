@@ -1,6 +1,8 @@
 package simpledb.materialize;
 
 import simpledb.query.*;
+import simpledb.record.RecordFile;
+
 import java.util.*;
 
 /**
@@ -128,5 +130,11 @@ public class GroupByScan implements Scan {
          return true;
       return false;
    }
+
+@Override
+public RecordFile getRecordFile() {
+	// TODO Auto-generated method stub
+	return null;
+}
 }
 

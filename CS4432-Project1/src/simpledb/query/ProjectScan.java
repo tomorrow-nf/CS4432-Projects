@@ -2,6 +2,8 @@ package simpledb.query;
 
 import java.util.*;
 
+import simpledb.record.RecordFile;
+
 /**
  * The scan class corresponding to the <i>project</i> relational
  * algebra operator.
@@ -65,4 +67,9 @@ public class ProjectScan implements Scan {
    public boolean hasField(String fldname) {
       return fieldlist.contains(fldname);
    }
+
+   @Override
+	public RecordFile getRecordFile() {
+		return s.getRecordFile();
+	}
 }

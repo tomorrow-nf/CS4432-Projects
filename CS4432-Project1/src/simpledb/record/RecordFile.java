@@ -164,6 +164,30 @@ public class RecordFile {
    
    // Need a getter to set the thing bro
    public TableInfo getTi() {
-	return ti;
-}
+	   return ti;
+   }
+	
+   // Replace the RecordFile with another given RecordFile
+	public void replaceMeWith(RecordFile newRec) {
+		this.tx = newRec.getTx();
+		this.ti = newRec.getTi();
+		this.rp = newRec.getRp();
+		this.currentblknum = newRec.getCurrentblknum();
+	}
+
+	public Transaction getTx() {
+		return tx;
+	}
+
+	public String getFilename() {
+		return filename;
+	}
+
+	public RecordPage getRp() {
+		return rp;
+	}
+
+	public int getCurrentblknum() {
+		return currentblknum;
+	}
 }
