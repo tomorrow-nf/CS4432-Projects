@@ -8,13 +8,10 @@ import simpledb.query.*;
 import simpledb.index.Index;
 
 /**
- * A static hash implementation of the Index interface.
- * A fixed number of buckets is allocated (currently, 100),
- * and each bucket is implemented as a file of index records.
- * @author Edward Sciore
  */
 public class ExHashIndex implements Index {
 	public static int NUM_BUCKETS = 4;
+	public static int MAX_BUCKET_SIZE = 4;
 	private String idxname;
 	private Schema sch;
 	private Transaction tx;
@@ -22,10 +19,10 @@ public class ExHashIndex implements Index {
 	private TableScan ts = null;
 	
 	private int globalDepth = 2; // Start globalDepth at 2...
-	private HashMap<Integer, Bucket> buckets;
+	private HashMap<Integer, Bucket> buckets = new HashMap<Integer, Bucket>();
 
 	/**
-	 * Opens a hash index for the specified index.
+	 * Opens an extensible hash index for the specified index.
 	 * @param idxname the name of the index
 	 * @param sch the schema of the index records
 	 * @param tx the calling transaction
@@ -34,13 +31,6 @@ public class ExHashIndex implements Index {
 		this.idxname = idxname;
 		this.sch = sch;
 		this.tx = tx;
-		
-		buckets = new HashMap<Integer, Bucket>();
-		// Initialize 4 buckets
-		Bucket bA = new Bucket(0, 2); buckets.put(0, bA);
-		Bucket bB = new Bucket(1, 2); buckets.put(1, bB);
-		Bucket bC = new Bucket(2, 2); buckets.put(2, bC);
-		Bucket bD = new Bucket(3, 2); buckets.put(3, bD);
 	}
 
 	/**
@@ -54,9 +44,25 @@ public class ExHashIndex implements Index {
 	 */
 	public void beforeFirst(Constant searchkey) {
 		close();
+		// Initialize 4 buckets
+		if (!buckets.containsKey(0)){
+			System.out.println("EH: INITIALIZING BUCKETS");
+			Bucket bA = new Bucket(0, 2); buckets.put(0, bA);
+		}
+		if (!buckets.containsKey(1)){
+			Bucket bB = new Bucket(1, 2); buckets.put(1, bB);		
+		}
+		if (!buckets.containsKey(2)){
+			Bucket bC = new Bucket(2, 2); buckets.put(2, bC);
+		}
+		if (!buckets.containsKey(3)){
+			Bucket bD = new Bucket(3, 2); buckets.put(3, bD);
+		}
+		
 		this.searchkey = searchkey;
 		int bitMask = genBitmask(globalDepth); // Create a bitmask, using the global depth by default
 		int bucket = searchkey.hashCode() & bitMask; // Calculate the bucket it needs to go to
+		System.out.println("EH: SEARCHKEY = " + searchkey + ", BUCKET ID = " + bucket);
 		
 		// Compare depths and update the bitmask if need be
 		if (buckets.get(bucket).getLocalDepth() < globalDepth){
@@ -66,9 +72,9 @@ public class ExHashIndex implements Index {
 			bucket = searchkey.hashCode() & bitMask; // If the bitmask had to change, update the bucket
 		}
 		
-		System.out.println("EH: BUCKET TOTAL = " + buckets.get(bucket).getTotal());
+		System.out.println("EH: BUCKET " + bucket + " TOTAL = " + buckets.get(bucket).getContents().size());
 		// Check if the bucket is full. If not, add to the bucket. If it is, split the bucket.
-		if (buckets.get(bucket).getTotal() == 4){
+		if (buckets.get(bucket).getContents().size() == MAX_BUCKET_SIZE){
 			// Increment depths
 			if (buckets.get(bucket).getLocalDepth() == globalDepth){
 				globalDepth++;
@@ -80,13 +86,14 @@ public class ExHashIndex implements Index {
 			updateBuckets(buckets.get(bucket), newBucket, bitMask); // Update the contents of the old and newly expanded bucket
 		}
 		else {
-			System.out.println("EH: ADDING " + searchkey.hashCode() + " TO BUCKET " + bucket);
+			System.out.println("EH: ADDING " + searchkey.hashCode() + " TO BUCKET " + buckets.get(bucket).getBucketNum());
 
 			buckets.get(bucket).addToContents(searchkey.hashCode()); // "Add" a value to the bucket
 			String tblname = idxname + bucket;
 			TableInfo ti = new TableInfo(tblname, sch);
 			ts = new TableScan(ti, tx);
 		}
+		System.out.println(toString());
 	}
 	
 	/**
@@ -122,11 +129,11 @@ public class ExHashIndex implements Index {
 		NUM_BUCKETS++;
 		
 		// Increment through the contents of the old bucket, reapplying the hash
-		for (i = 0; i < bucket.getTotal(); i++){
+		for (i = 0; i < bucket.getContents().size(); i++){
 			newHash = bucket.getContents().get(i) & bitMask; // Apply the new bitmask
 			bucket.getContents().remove(i); // Remove this value from the contents
 			
-			System.out.println("EH: MOVING " + bucket.getContents().get(i) + "TO BUCKET " + newHash);
+			System.out.println("EH: MOVING " + bucket.getContents().get(i) + "TO BUCKET " + buckets.get(newHash).getBucketNum());
 			
 			// Add the value to its appropriate bucket
 			buckets.get(newHash).addToContents(bucket.getContents().get(i)); 
@@ -135,7 +142,7 @@ public class ExHashIndex implements Index {
 			ts = new TableScan(ti, tx);
 		}
 		// Add the new value to its appropriate bucket
-		System.out.println("EH: (NEW) ADDING " + newBucketID + " TO BUCKET " + newBucketHashed);
+		System.out.println("EH: (NEW) ADDING " + newBucketID + " TO BUCKET " + buckets.get(newBucketHashed).getBucketNum());
 
 		buckets.get(newBucketHashed).addToContents(newBucketHashed); 
 		String tblname2 = idxname + newBucketHashed;
@@ -217,6 +224,20 @@ public class ExHashIndex implements Index {
 	 */
 	public static int searchCost(int numblocks, int rpb){
 		return numblocks / ExHashIndex.NUM_BUCKETS;
+	}
+	
+	public String toString(){
+		String str = "\n=========\nBUCKETS:\n=========\n";
+		int i, j;
+		for (i = 0; i < buckets.size(); i++){
+			str = (str + buckets.get(i).getBucketNum() + "\n------\n");
+			for (j = 0; j < buckets.get(i).getContents().size(); j++){
+				str = (str + buckets.get(i).getContents().get(j) + " ");
+			}
+			str = (str + "\n=======\n");
+		}
+		str = (str + "\n=========\n");
+		return str;
 	}
 }
 

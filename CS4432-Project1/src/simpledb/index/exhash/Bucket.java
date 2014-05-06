@@ -6,13 +6,11 @@ public class Bucket {
 
 	private int bucketNum;
 	private int localDepth;
-	private int total = 0;
-	private ArrayList<Integer> contents;
+	private ArrayList<Integer> contents = new ArrayList<Integer>();
 	
 	public Bucket(int bucketNum, int globalDepth) {
 		this.bucketNum = bucketNum;
 		this.localDepth = globalDepth;
-		this.contents = new ArrayList<Integer>();
 	}
 	
 	public void incLocalDepth(){
@@ -21,7 +19,6 @@ public class Bucket {
 
 	public void addToContents(Integer value){
 		contents.add(value);
-		total++;
 	}
 	
 	// Getters and setters
@@ -39,14 +36,6 @@ public class Bucket {
 
 	public void setLocalDepth(int localDepth) {
 		this.localDepth = localDepth;
-	}
-
-	public int getTotal() {
-		return total;
-	}
-
-	public void setTotal(int total) {
-		this.total = total;
 	}
 
 	public ArrayList<Integer> getContents() {
