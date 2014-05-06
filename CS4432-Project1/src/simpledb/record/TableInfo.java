@@ -84,7 +84,7 @@ public class TableInfo {
     * @return the offset of that field within a record
     */
    public int offset(String fldname) {
-	  System.out.println("Field Name: " + fldname);
+	  //System.out.println("Field Name: " + fldname);
       return offsets.get(fldname);
    }
    

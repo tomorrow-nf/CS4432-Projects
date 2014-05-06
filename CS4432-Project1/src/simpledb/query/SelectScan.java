@@ -12,6 +12,7 @@ import simpledb.record.*;
 public class SelectScan implements UpdateScan {
    private Scan s;
    private Predicate pred;
+   private int IOs;
    
    /**
     * Creates a select scan having the specified underlying
@@ -28,6 +29,7 @@ public class SelectScan implements UpdateScan {
    
    public void beforeFirst() {
       s.beforeFirst();
+      IOs++;
    }
    
    /**
@@ -38,6 +40,7 @@ public class SelectScan implements UpdateScan {
     * @see simpledb.query.Scan#next()
     */
    public boolean next() {
+	  IOs++;
       while (s.next())
          if (pred.isSatisfied(s))
          return true;
@@ -46,6 +49,7 @@ public class SelectScan implements UpdateScan {
    
    public void close() {
       s.close();
+	  System.out.println("IOs: " + IOs);
    }
    
    public Constant getVal(String fldname) {

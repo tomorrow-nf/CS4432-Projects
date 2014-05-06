@@ -43,9 +43,7 @@ public class SQLInterpreter {
 	}
 
 	private static void doQuery(String cmd) {
-		try {
-			long startTime = System.currentTimeMillis();
-			
+		try {			
 		    Statement stmt = conn.createStatement();
 		    ResultSet rs = stmt.executeQuery(cmd);
 		    ResultSetMetaData md = rs.getMetaData();
@@ -78,10 +76,6 @@ public class SQLInterpreter {
 				System.out.println();
 			}
 			rs.close();
-			
-			long endTime = System.currentTimeMillis();
-			long elapsedTime = endTime - startTime;
-			System.out.println("QUERY TIME: " + elapsedTime + "ms");
 		}
 		catch (SQLException e) {
 			System.out.println("SQL Exception: " + e.getMessage());

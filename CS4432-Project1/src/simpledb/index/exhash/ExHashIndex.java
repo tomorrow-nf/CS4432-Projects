@@ -67,7 +67,9 @@ public class ExHashIndex implements Index {
 		// Check if the bucket is full. If not, add to the bucket. If it is, split the bucket.
 		if (buckets.get(bucket).getTotal() == 4){
 			// Increment depths
-			globalDepth++;
+			if (buckets.get(bucket).getLocalDepth() == globalDepth){
+				globalDepth++;
+			}
 			buckets.get(bucket).incLocalDepth();
 			// Update the buckets
 			int newBucket = searchkey.hashCode(); // Add a new bucket

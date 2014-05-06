@@ -6,7 +6,7 @@ import java.sql.Statement;
 import java.util.Random;
 import simpledb.remote.SimpleDriver;
 public class CreateTestTables {
- final static int maxSize=20000;
+ final static int maxSize=5000;
  /**
   * @param args
   */
@@ -61,7 +61,7 @@ public class CreateTestTables {
     }
     else//case where i=5
     {
-     for(int j=0;j<maxSize/2;j++)// insert 10000 records into test5
+     for(int j=0;j<maxSize/2;j++)// insert 2500 records into test5
      {
       s.executeUpdate("insert into test"+i+" (a1,a2) values("+j+","+j+ ")");
      }
