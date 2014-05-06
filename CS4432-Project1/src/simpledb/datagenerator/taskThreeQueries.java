@@ -1,6 +1,7 @@
 package simpledb.datagenerator;
 
 import java.sql.*;
+import java.util.Random;
 
 import simpledb.remote.SimpleDriver;
 
@@ -13,17 +14,20 @@ public class taskThreeQueries {
 			conn = d.connect("jdbc:simpledb://localhost", null);
 
 			// Step 2: execute the queries
-			long startTime = System.currentTimeMillis();
-			Statement stmt = conn.createStatement();
 			for(int i=1;i<6;i++){
-				String qry = "select a1, a2 " + "from test" + i + " where a1 = 275";
+				long startTime = System.currentTimeMillis();
+
+				Statement stmt = conn.createStatement();
+				String qry = "select a1, a2 "
+				           + "from test" + i
+				           + " where a1 = 275 ";
 				ResultSet rs = stmt.executeQuery(qry);
 
 				// Step 3: loop through the result set
-				System.out.println("a1\ta2");
+				System.out.println("*****\nTEST" + i + "\n-----\na1\ta2\n-----");
 				while (rs.next()) {
-					String a1 = rs.getString("a1");
-					String a2 = rs.getString("a2");
+					int a1 = rs.getInt("a1");
+					int a2 = rs.getInt("a2");
 					System.out.println(a1 + "\t" + a2);
 				}
 				rs.close();

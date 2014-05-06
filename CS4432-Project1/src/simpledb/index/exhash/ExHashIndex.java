@@ -12,7 +12,7 @@ import simpledb.index.Index;
  */
 public class ExHashIndex implements Index {
 	public static int NUM_BUCKETS = 4;
-	public static int MAX_BUCKET_SIZE = 2;
+	public static int MAX_BUCKET_SIZE = 8;
 	public static int globalDepth = 2; // Start global depth at 2
 	private String idxname;
 	private Schema sch;
@@ -99,7 +99,7 @@ public class ExHashIndex implements Index {
 			TableInfo ti = new TableInfo(tblname, sch);
 			ts = new TableScan(ti, tx);
 		}
-		System.out.println(toString());
+		//System.out.println(toString());
 	}
 
 	/**
@@ -156,7 +156,7 @@ public class ExHashIndex implements Index {
 			// Add the value to its appropriate bucket
 			buckets.get(newHash).addToContents(newSearchkey); 
 			System.out.println("EH: MOVING " + newSearchkey + " TO BUCKET " + buckets.get(newHash).getBucketNum());
-			System.out.println(toString());
+			//System.out.println(toString());
 			String tblname = idxname + newHash;
 			TableInfo ti = new TableInfo(tblname, sch);
 			ts = new TableScan(ti, tx);
