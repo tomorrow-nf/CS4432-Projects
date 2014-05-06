@@ -16,6 +16,14 @@ public class Bucket {
 	public void incLocalDepth(){
 		localDepth++;
 	}
+	
+	public String printContents(){
+		String str = "";
+		for (int i = 0; i < contents.size(); i++){
+			str = str + contents.get(i) + " ";
+		}
+		return str;
+	}
 
 	public void addToContents(Integer value){
 		contents.add(value);
